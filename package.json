@@ -1,0 +1,29 @@
+{
+  "name": "maps-timezone",
+  "version": "1.0.0",
+  "description": "Node setup for timezone on maps",
+  "main": "bundle.js",
+  "dependencies": {
+    "brfs": "^1.4.3",
+    "geojson-utils": "^1.1.0",
+    "shapefile": "^0.5.10",
+    "tzwhere": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nma83/maps-timezone.git"
+  },
+  "keywords": [
+    "maps"
+  ],
+  "author": "NMA",
+  "license": "GPLv3",
+  "bugs": {
+    "url": "https://github.com/nma83/maps-timezone/issues"
+  },
+  "homepage": "https://github.com/nma83/maps-timezone#readme"
+}

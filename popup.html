@@ -16,8 +16,10 @@
         /* avoid an excessively wide status text */
         white-space: pre;
         text-overflow: ellipsis;
-        overflow: hidden;
-        max-width: 400px;
+        /*overflow: hidden;*/
+      }
+      #tzName, #tzOffset {
+        text-align: center;
       }
     </style>
 
@@ -30,6 +32,8 @@
     <script src="bundle.js"></script>
   </head>
   <body>
+    <div id="tzName">-</div><br />
+    <div id="tzOffset">-</div><br />
     <div id="status"></div>
   </body>
 </html>

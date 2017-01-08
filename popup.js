@@ -4,6 +4,7 @@
 
 // NPM requires
 const url = require('url');
+var xhr = new XMLHttpRequest();
 
 /**
  * Get the current URL.
@@ -45,16 +46,61 @@ function renderStatus(statusText) {
   document.getElementById('status').textContent = statusText;
 }
 
+function renderResult(tzName, tzOffset) {
+    document.getElementById('tzName').textContent = tzName;
+    document.getElementById('tzOffset').textContent = tzOffset;
+}
+
+function resultVisibility(vis) {
+    var disp = 'none';
+    if (vis)
+        disp = 'block';
+    else
+        disp = 'none';
+    document.getElementById('tzName').style.display = disp;
+    document.getElementById('tzOffset').style.display = disp;
+}
+
 function isValidMapPath(path) {
     pathArr = pathname.split('/');
     console.log('p' + pathArr[0] + ',' + pathArr[1] + ':' + pathArr.length);
-    if (pathArr[1] === 'maps' && pathArr[2] === 'place' && pathArr.length == 6)
+    if (pathArr[1] === 'maps' && pathArr.length > 2)
         return true;
     else
         return false;
 }
 
-function latLongToTzOffset(path) {
+function latLongFromPath(path) {
+    pathArr = pathname.split('/');
+    // Potential path components that specify lat/long
+    if (pathArr[2].startsWith('@'))
+        latlonStr = pathArr[2];
+    else if (pathArr[4].startsWith('@'))
+        latlonStr = pathArr[4];
+    latlon = latlonStr.split(',');
+    return { 'lat': parseFloat(latlon[0].slice(1)), 'lng': parseFloat(latlon[1]) };
+}
+
+function latLongToTzOffset(latlng) {
+    fetch = "http://tzwhere-nma83.rhcloud.com/q?lat=" +
+        latlng['lat'] + "&lng=" + latlng['lng'];
+    xhr.open("GET", fetch, true);
+    xhr.onreadystatechange = function() {
+        console.log('state ' + xhr.readyState);
+        if (xhr.readyState == 4) {
+            var res = JSON.parse(xhr.responseText);
+            console.log(res);
+            if (res.hasOwnProperty('error')) {
+                resultVisibility(false);
+                renderStatus('Error!');
+            } else {
+                renderResult(res['name'], res['offset']);
+                resultVisibility(true);
+                renderStatus('Success!');
+            }
+        }
+    };
+    xhr.send();
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -62,9 +108,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // Put the image URL in Google search.
         urlObj = url.parse(taburl);
         pathname = urlObj.pathname;
-        if (isValidMapPath(pathname))
-            renderStatus('path ' + pathname);
-        else
+        if (isValidMapPath(pathname)) {
+            renderStatus('Fetching data...');
+            latlng = latLongFromPath(pathname);
+            latLongToTzOffset(latlng);
+        } else {
+            resultVisibility(false);
             renderStatus('Not a Maps page');
+        }
     });
 });
