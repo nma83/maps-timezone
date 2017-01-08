@@ -79,7 +79,8 @@ function latLongFromPath(path) {
     else if (pathArr[4].startsWith('@'))
         latlonStr = pathArr[4];
     latlon = latlonStr.split(',');
-    return { 'lat': parseFloat(latlon[0].slice(1)), 'lng': parseFloat(latlon[1]) };
+    return { 'lat': parseFloat(latlon[0].slice(1)), 'lng': parseFloat(latlon[1]),
+             'zoom': parseFloat(latlon[2].slice(0, -1))};
 }
 
 function latLongToTzOffset(latlng) {
@@ -95,29 +96,45 @@ function latLongToTzOffset(latlng) {
                 resultVisibility(false);
                 renderStatus('Error!');
             } else {
-                renderResult(res['name'], res['offset']);
-                resultVisibility(true);
-                renderStatus('Success!');
+                if (res['name']) {
+                    var offset = new Date().toLocaleString("en-US", {timeZone: res['name'],
+                                                                     timeZoneName: "long"});
+                    renderResult(res['name'], offset); //res['offset']);
+                    resultVisibility(true);
+                    // Warn on high zoom levels
+                    var stat = 'Success!';
+                    if (latlng['zoom'] < 5)
+                        stat += ' (zoom in for a better result)';
+                    renderStatus(stat);
+                } else {
+                    resultVisibility(false);
+                    renderStatus('No timezone in current location');
+                }
             }
         }
     };
     xhr.send();
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function init() {
     getCurrentTabUrl(function(taburl) {
         // Put the image URL in Google search.
         urlObj = url.parse(taburl);
         pathname = urlObj.pathname;
         if (isValidMapPath(pathname)) {
-            renderStatus('Fetching data...');
-            latlng = latLongFromPath(pathname);
+            var latlng = latLongFromPath(pathname);
             latLongToTzOffset(latlng);
+            renderStatus('Fetching data...');
         } else {
             resultVisibility(false);
             renderStatus('Not a Maps page');
         }
     });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    //document.getElementById('refresh').addEventListener("click", init());
+    init();
 });
 
 },{"url":6}],2:[function(require,module,exports){

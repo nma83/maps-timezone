@@ -6,22 +6,15 @@
  -->
 <html>
   <head>
-    <title>Getting Started Extension's Popup</title>
-    <style>
-      body {
-        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-        font-size: 100%;
-      }
-      #status {
-        /* avoid an excessively wide status text */
-        white-space: pre;
-        text-overflow: ellipsis;
-        /*overflow: hidden;*/
-      }
-      #tzName, #tzOffset {
-        text-align: center;
-      }
-    </style>
+    <title>Maps Timezone</title>
+	<!-- Scripts -->
+	<script src="js/jquery-2.0.3.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+    <script src="bundle.js"></script>
+	
+	<!-- Cascading Style Sheets -->
+	<link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<link href="css/custom.css" rel="stylesheet" media="screen">		
 
     <!--
       - JavaScript and HTML must be in separate files: see our Content Security
@@ -29,12 +22,19 @@
       -
       - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
      -->
-    <script src="bundle.js"></script>
   </head>
   <body>
-    <div id="tzName">-</div><br />
-    <div id="tzOffset">-</div><br />
-    <div id="status"></div>
+    <section>
+	  <div class="row align-items-center">
+		<div class="col" id="tzName">-</div>
+      </div>
+      <div class="row align-items-center">
+		<div class="col" id="tzOffset">-</div>
+      </div>
+      <div class="row align-items-center">
+        <div class="col" id="status"></div>
+	  </div>
+	</section>
   </body>
 </html>
 
